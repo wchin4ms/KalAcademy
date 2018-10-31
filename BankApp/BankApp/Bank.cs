@@ -12,11 +12,15 @@ namespace BankApp
         CD,
         LOANS
     }
-    class Bank
+    static class Bank
     {
         private static List<Account> accounts = new List<Account>();
-        public static Account CreateAccount(string emailAddress, AccountType accountType, decimal startingBalance)
+        public static Account CreateAccount(string emailAddress, AccountType accountType, decimal startingBalance = 0)
         {
+            if (string.IsNullOrEmpty(emailAddress))
+            {
+                throw new ArgumentNullException(nameof(emailAddress), "Email address must be provided.");
+            }
             Account account = new Account()
             {
                 EmailAddress = "test@test.com",
@@ -29,10 +33,21 @@ namespace BankApp
         public static void Deposit(decimal deposit, int accountNumber)
         {
             Account account = accounts.SingleOrDefault(acc => acc.AccountNumber == accountNumber);
-            if (account != null)
+            if (account == null)
             {
-                account.Deposit(deposit);
+                throw new ArgumentException("Invalid account number.", nameof(accountNumber));
             }
+            account.Deposit(deposit);
+        }
+
+        public static void Withdraw (int accountNumber, decimal amount)
+        {
+            Account account = accounts.SingleOrDefault(acc => acc.AccountNumber == accountNumber);
+            if (account == null)
+            {
+                throw new ArgumentException("Invalid account number.", nameof(accountNumber));
+            }
+            account.Withdraw(amount);
         }
 
         public static Account GetAccount (int accountNumber)

@@ -34,6 +34,15 @@ namespace BankApp
             Balance += deposit;
         }
 
+        public void Withdraw (decimal withdrawal)
+        {
+            if (withdrawal > Balance)
+            {
+                throw new NSFException("Withdrawal amount is greater than the balance.");
+            }
+            Balance -= withdrawal;
+        }
+
         public override string ToString()
         {
             return $"AN: {AccountNumber}, B: {Balance:C}, AT: {AccountType}, Created: {CreatedDate}";
