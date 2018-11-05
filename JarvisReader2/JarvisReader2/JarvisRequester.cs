@@ -46,16 +46,10 @@ namespace JarvisReader
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             request.Headers.Add("accept-encoding", "gzip, deflate, br");
             request.Headers.Add("accept-language", "en-US,en;q=0.9");
-            request.Headers.Add("clientid", "Jarvis");
             request.ContentType = "application/json";
             request.CookieContainer = GetCookies();
             request.Headers.Add("csrftoken", PROPERTIES.Get("csrftoken"));
-            request.Headers.Add("dnt", "1");
             request.Headers.Add("jarvis.overridetimeout", "601000");
-            request.Headers.Add("origin", JARVIS_URL);
-            request.Headers.Add("sourceidentity", "{\"user\":\"weschin\",\"time\":1538577606245,\"retry\":false,\"selectedPath\":[\"SPOMSIT\",\"OCE\",\"Farm%20Overview\"],\"selected\":\"%24%24%24\",\"v\":\"1538156178991\"}");
-            request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
-            request.Headers.Add("x-requested-with", "XMLHttpRequest");
 
             string jsonRequestPayload = JsonConvert.SerializeObject(payload, JSON_SERIALIZER_SETTINGS);
             Console.WriteLine("PAYLOAD: " + jsonRequestPayload);
