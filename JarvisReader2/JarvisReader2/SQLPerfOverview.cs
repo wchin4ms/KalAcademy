@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JarvisReader
 {
-    class SQLPerfOverview
+    class SQLPerfOverview : IOverview
     {
         // Dictionary - SQL Machine Name : Series Values
         // ( SQL <optional 3 digit Network><FarmId>-<3 digit rounds up vm name>)
@@ -16,7 +16,8 @@ namespace JarvisReader
         private Dictionary<string, SeriesValues> ProcessorUtilization = new Dictionary<string, SeriesValues>();
         private Dictionary<string, SeriesValues> ThreadUtilization = new Dictionary<string, SeriesValues>();
         private Dictionary<string, SeriesValues> SlowestSQLDurations = new Dictionary<string, SeriesValues>();
-        private List<DBQueryInfo> DBQueryInfos = new List<DBQueryInfo>();
+        private List<DBQueryInfo> SlowestDBQueryInfos = new List<DBQueryInfo>();
+        private Dictionary<string, SeriesValues> SlowestSQLConnectionTime = new Dictionary<string, SeriesValues>();
 
         public void SetProcessorUtilization (string machine, SeriesValues vals)
         {
@@ -30,14 +31,23 @@ namespace JarvisReader
         {
             SlowestSQLDurations.Add(server, vals);
         }
+        public void SetSlowestSQLConnectionTime(string database, SeriesValues vals)
+        {
+            SlowestSQLConnectionTime.Add(database, vals);
+        }
         public void SetSlowestDBDuration(string database, string server, SeriesValues vals)
         {
-            DBQueryInfos.Add(new DBQueryInfo()
+            SlowestDBQueryInfos.Add(new DBQueryInfo()
             {
                 Database = database,
                 Server = server,
                 Values = vals
             });
+        }
+
+        public void Evaluate()
+        {
+
         }
 
         public string InfoString()
@@ -68,7 +78,7 @@ namespace JarvisReader
                 stringBuilder.Append(entry.Value.InfoString());
             }
             stringBuilder.Append("\nSlowest SQL DB Durations: ");
-            foreach (DBQueryInfo info in DBQueryInfos)
+            foreach (DBQueryInfo info in SlowestDBQueryInfos)
             {
                 stringBuilder.Append(info.InfoString());
             }

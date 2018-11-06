@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JarvisReader
 {
-    class ProbeOverview
+    class ProbeOverview : IOverview
     {
         private const string HOME_PAGE_RUNNER_NAME = "HomePage";
         private const string ORG_ID_AUTH_RUNNER_NAME = "OrgIdAuth";
@@ -78,6 +78,10 @@ namespace JarvisReader
                     UploadDocMachineValues.Add(machine, seriesValues);
                     break;
             }
+        }
+
+        public void Evaluate()
+        {
         }
 
         public string InfoString()

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JarvisReader
 {
-    class SQLPerfOverviewRequest
+    class SQLPerfOverviewRequest : OverviewRequest<SQLPerfOverview>
     {
         public static SQLPerfOverview Get(string farmLabel, long startTime, long endTime)
         {
@@ -54,8 +54,6 @@ namespace JarvisReader
 
             // Make Post
             response = JarvisRequester.PostRequest(sqlThreadUtilURL, requestPayload);
-            startTime = response.StartTimeUtc;
-            endTime = response.EndTimeUtc;
             foreach (EvaluatedResult eval in response.Results.Values)
             {
                 List<Dimension> dimensions = eval.DimensionList.Values;
@@ -70,10 +68,36 @@ namespace JarvisReader
                 overview.SetThreadUtilization(machine, seriesValues);
             }
 
-            // Slowest SQL Server Query Durations Payload
+            // Slowest SQL Connection Time Payload
             requestPayload.Instance = null;
             requestPayload.Machine = null;
+            requestPayload.Role.Item2[0] = "USR";
+            requestPayload.ContentDatabase = new PayloadItem() { Item1 = true, Item2 = new string[1] { "<null>" } };
+            requestPayload.IsContentAppPool = new PayloadItem() { Item1 = false, Item2 = new string[1] { "true" } };
+
+            // Slowest SQL Connection Time URL
+            string slowestSQLConnectionTimeURL = BuildURL("RequestUsage", "TotalSqlConnectionDuration", "Sum", startTime, endTime, 40, "None", true);
+
+            // Make Post
+            response = JarvisRequester.PostRequest(slowestSQLConnectionTimeURL, requestPayload);
+            foreach (EvaluatedResult eval in response.Results.Values)
+            {
+                List<Dimension> dimensions = eval.DimensionList.Values;
+                string database = dimensions.Where(dim => dim.Key.Equals(Dimension.CONTENT_DATABASE)).Single().Value;
+                SeriesValues seriesValues = new SeriesValues()
+                {
+                    StartTimeMillisUtc = startTime,
+                    EndTimeMillisUtc = endTime,
+                    TimeResolutionInMillis = response.TimeResolutionInMilliseconds,
+                    Values = eval.Scores.ToArray()
+                };
+                overview.SetSlowestSQLConnectionTime(database, seriesValues);
+            }
+
+            // Slowest SQL Server Query Durations Payload
             requestPayload.Role = null;
+            requestPayload.ContentDatabase = null;
+            requestPayload.IsContentAppPool = null;
             requestPayload.SlowestQueryServer = new PayloadItem() { Item1 = false, Item2 = new string[0] };
 
             // Slowest SQL Server Query Durations URL
@@ -81,8 +105,6 @@ namespace JarvisReader
 
             // Make Post
             response = JarvisRequester.PostRequest(slowestSQLQueryURL, requestPayload);
-            startTime = response.StartTimeUtc;
-            endTime = response.EndTimeUtc;
             foreach (EvaluatedResult eval in response.Results.Values)
             {
                 List<Dimension> dimensions = eval.DimensionList.Values;
@@ -105,8 +127,6 @@ namespace JarvisReader
 
             // Make Post
             response = JarvisRequester.PostRequest(slowestDBQueryURL, requestPayload);
-            startTime = response.StartTimeUtc;
-            endTime = response.EndTimeUtc;
             foreach (EvaluatedResult eval in response.Results.Values)
             {
                 List<Dimension> dimensions = eval.DimensionList.Values;

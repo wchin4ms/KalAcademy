@@ -142,7 +142,8 @@
     <Compile Include="DimensionList.cs" />
     <Compile Include="EvaluatedResult.cs" />
     <Compile Include="FarmOverview.cs" />
-    <Compile Include="JarvisDashboard.cs" />
+    <Compile Include="IOverview.cs" />
+    <Compile Include="IOverviewRequest.cs" />
     <Compile Include="ProbeOverview.cs" />
     <Compile Include="ProbeOverviewRequest.cs" />
     <Compile Include="JsonResponse.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="SQLPerfOverviewRequest.cs" />
     <Compile Include="URLBuilder.cs" />
     <Compile Include="USRandRPSPerfOverview.cs" />
+    <Compile Include="USRandRPSPerfOverviewRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

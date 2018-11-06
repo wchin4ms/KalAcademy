@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JarvisReader
 {
-    class ProbeOverviewRequest
+    class ProbeOverviewRequest : OverviewRequest<ProbeOverview>
     {
         public static ProbeOverview Get(string farmLabel, long startTime, long endTime)
         {

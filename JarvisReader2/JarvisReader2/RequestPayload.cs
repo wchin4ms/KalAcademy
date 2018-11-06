@@ -11,6 +11,10 @@ namespace JarvisReader
         public PayloadItem InstanceNum { get; set; }
         [JsonProperty("RunnerName")]
         public PayloadItem RunnerName { get; set; }
+        [JsonProperty("ContentDatabase")]
+        public PayloadItem ContentDatabase { get; set; }
+        [JsonProperty("IsContentAppPool")]
+        public PayloadItem IsContentAppPool { get; set; }
         [JsonProperty("__DataCenter")]
         public PayloadItem DataCenter { get; set; }
         [JsonProperty("__Environment")]

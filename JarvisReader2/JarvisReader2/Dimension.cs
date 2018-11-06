@@ -9,6 +9,7 @@ namespace JarvisReader
 {
     class Dimension
     {
+        public const string CONTENT_DATABASE = "ContentDatabase";
         public const string FARM_LABEL = "__FarmLabel";
         public const string FARM_TYPE = "__FarmType";
         public const string INSTANCE_NUM = "InstanceNum";
