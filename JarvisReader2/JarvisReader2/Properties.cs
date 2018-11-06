@@ -6,71 +6,37 @@ using System.Threading.Tasks;
 
 namespace JarvisReader
 {
-    public class Properties
+    public static class Properties
     {
-        private Dictionary<String, String> list;
-        private String filename;
+        private static Dictionary<String, String> list = null;
+        private static String FileName = "auth.properties";
 
-        public Properties(String file)
+        public static string Get(String field)
         {
-            Reload(file);
+            if (list == null)
+            {
+                Load();
+            }
+
+            string value = "";
+            if (list.ContainsKey(field))
+            {
+                value = list[field];
+            }
+            return value;
         }
 
-        public String Get(String field, String defValue)
+        private static void Load()
         {
-            return (Get(field) == null) ? (defValue) : (Get(field));
-        }
-        public String Get(String field)
-        {
-            return (list.ContainsKey(field)) ? (list[field]) : (null);
-        }
-
-        public void Set(String field, Object value)
-        {
-            if (!list.ContainsKey(field))
-                list.Add(field, value.ToString());
-            else
-                list[field] = value.ToString();
-        }
-
-        public void Save()
-        {
-            Save(this.filename);
-        }
-
-        public void Save(String filename)
-        {
-            this.filename = filename;
-
-            if (!System.IO.File.Exists(filename))
-                System.IO.File.Create(filename);
-
-            System.IO.StreamWriter file = new System.IO.StreamWriter(filename);
-
-            foreach (String prop in list.Keys.ToArray())
-                if (!String.IsNullOrWhiteSpace(list[prop]))
-                    file.WriteLine(prop + "=" + list[prop]);
-
-            file.Close();
-        }
-
-        public void Reload()
-        {
-            Reload(this.filename);
-        }
-
-        public void Reload(String filename)
-        {
-            this.filename = filename;
             list = new Dictionary<String, String>();
 
-            if (System.IO.File.Exists(filename))
-                LoadFromFile(filename);
-            else
-                System.IO.File.Create(filename);
+            if (System.IO.File.Exists(FileName))
+            {
+                LoadFromFile(FileName);
+            }
         }
 
-        private void LoadFromFile(String file)
+        private static void LoadFromFile(String file)
         {
             foreach (String line in System.IO.File.ReadAllLines(file))
             {
