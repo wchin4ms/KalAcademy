@@ -3,7 +3,7 @@
 namespace JarvisReader
 {
 
-    class RequestPayload
+    class JarvisRequestPayload
     {
         [JsonProperty("Instance")]
         public PayloadItem Instance { get; set; }
