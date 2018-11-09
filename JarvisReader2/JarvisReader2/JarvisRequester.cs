@@ -12,7 +12,6 @@ namespace JarvisReader
     class JarvisRequester
     {
         private const string JARVIS_URL = "https://jarvis-west.dc.ad.msft.net";
-        private static readonly Properties PROPERTIES = new Properties("auth.properties");
         // Need to ignore metadata strings since response str has '$type' and '$value' as JSON keys
         // And don't serialize request json objects/fields if null
         private static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
@@ -27,15 +26,15 @@ namespace JarvisReader
             {
                 cookies = new CookieContainer();
                 Uri jarvisURI = new Uri(JARVIS_URL);
-                cookies.Add(jarvisURI, new Cookie("FedAuth", PROPERTIES.Get("FedAuth")));
-                cookies.Add(jarvisURI, new Cookie("FedAuth1", PROPERTIES.Get("FedAuth1")));
-                cookies.Add(jarvisURI, new Cookie("FedAuth2", PROPERTIES.Get("FedAuth2")));
-                cookies.Add(jarvisURI, new Cookie("FedAuth3", PROPERTIES.Get("FedAuth3")));
-                cookies.Add(jarvisURI, new Cookie("FedAuth4", PROPERTIES.Get("FedAuth4")));
+                cookies.Add(jarvisURI, new Cookie("FedAuth", Properties.Get("FedAuth")));
+                cookies.Add(jarvisURI, new Cookie("FedAuth1", Properties.Get("FedAuth1")));
+                cookies.Add(jarvisURI, new Cookie("FedAuth2", Properties.Get("FedAuth2")));
+                cookies.Add(jarvisURI, new Cookie("FedAuth3", Properties.Get("FedAuth3")));
+                cookies.Add(jarvisURI, new Cookie("FedAuth4", Properties.Get("FedAuth4")));
             }
             return cookies;
         }
-        public static JsonResponse PostRequest(string url, RequestPayload payload)
+        public static JarvisResponse PostRequest(string url, JarvisRequestPayload payload)
         {
             Console.WriteLine("URL: " + url);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -48,7 +47,7 @@ namespace JarvisReader
             request.Headers.Add("accept-language", "en-US,en;q=0.9");
             request.ContentType = "application/json";
             request.CookieContainer = GetCookies();
-            request.Headers.Add("csrftoken", PROPERTIES.Get("csrftoken"));
+            request.Headers.Add("csrftoken", Properties.Get("jarvisCSRFtoken"));
             request.Headers.Add("jarvis.overridetimeout", "601000");
 
             string jsonRequestPayload = JsonConvert.SerializeObject(payload, JSON_SERIALIZER_SETTINGS);
@@ -63,12 +62,12 @@ namespace JarvisReader
 
             // Get response
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            JsonResponse jsonResponse;
+            JarvisResponse jsonResponse;
             using (StreamReader streamReader = new StreamReader(response.GetResponseStream()))
             {
                 string responseStr = streamReader.ReadToEnd();
                 Console.WriteLine("RESPONSE: " + responseStr);
-                jsonResponse = JsonConvert.DeserializeObject<JsonResponse>(responseStr, JSON_SERIALIZER_SETTINGS);
+                jsonResponse = JsonConvert.DeserializeObject<JarvisResponse>(responseStr, JSON_SERIALIZER_SETTINGS);
                 streamReader.Close();
                 response.Close();
             }

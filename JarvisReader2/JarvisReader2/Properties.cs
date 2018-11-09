@@ -9,7 +9,7 @@ namespace JarvisReader
     public static class Properties
     {
         private static Dictionary<String, String> list = null;
-        private static String FileName = "auth.properties";
+        private const string FileName = "auth.properties";
 
         public static string Get(String field)
         {

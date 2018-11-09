@@ -13,7 +13,7 @@ namespace JarvisReader
             ProbeOverview overview = new ProbeOverview();
 
             // Availability Payload
-            RequestPayload requestPayload = new RequestPayload
+            JarvisRequestPayload requestPayload = new JarvisRequestPayload
             {
                 InstanceNum = new PayloadItem { Item1 = false, Item2 = new string[0] },
                 RunnerName = new PayloadItem { Item1 = false, Item2 = new string[] { "homepage", "uploaddoc", "teamsitehomepage" } },
@@ -24,7 +24,7 @@ namespace JarvisReader
             string availabilityURL = BuildURL("Availability", "Success%20Rate", startTime, endTime);
 
             // Availability
-            JsonResponse response = JarvisRequester.PostRequest(availabilityURL, requestPayload);
+            JarvisResponse response = JarvisRequester.PostRequest(availabilityURL, requestPayload);
             startTime = response.StartTimeUtc;
             endTime = response.EndTimeUtc;
 

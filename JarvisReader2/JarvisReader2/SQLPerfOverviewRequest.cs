@@ -13,7 +13,7 @@ namespace JarvisReader
             SQLPerfOverview overview = new SQLPerfOverview();
 
             // SQL Processor Utilization Payload
-            RequestPayload requestPayload = new RequestPayload()
+            JarvisRequestPayload requestPayload = new JarvisRequestPayload()
             {
                 Instance = new PayloadItem() { Item1 = false, Item2 = new string[0] },
                 DataCenter = new PayloadItem() { Item1 = false, Item2 = new string[0] },
@@ -29,7 +29,7 @@ namespace JarvisReader
             string sqlProcUtilURL = BuildURL("PerfCounters", "%255CProcessor(*)%255C%2525%2520Processor%2520Time", "Max", startTime, endTime, 40, "Automatic", false);
 
             // Make Post
-            JsonResponse response = JarvisRequester.PostRequest(sqlProcUtilURL, requestPayload);
+            JarvisResponse response = JarvisRequester.PostRequest(sqlProcUtilURL, requestPayload);
             startTime = response.StartTimeUtc;
             endTime = response.EndTimeUtc;
             foreach (EvaluatedResult eval in response.Results.Values)

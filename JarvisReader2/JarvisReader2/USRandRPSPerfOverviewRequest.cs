@@ -13,7 +13,7 @@ namespace JarvisReader
             USRandRPSPerfOverview overview = new USRandRPSPerfOverview();
 
             // USR Processor - % Processor Time for CPU
-            RequestPayload requestPayload = new RequestPayload()
+            JarvisRequestPayload requestPayload = new JarvisRequestPayload()
             {
                 Instance = new PayloadItem() { Item1 = false, Item2 = new string[1] { "_Total" } },
                 DataCenter = new PayloadItem() { Item1 = false, Item2 = new string[0] },
@@ -29,7 +29,7 @@ namespace JarvisReader
             string processorCPUTimeURL = BuildURL("%255CProcessor(*)%255C%2525%2520Processor%2520Time", "NullableAverage", startTime, endTime);
 
             // Make Post
-            JsonResponse response = JarvisRequester.PostRequest(processorCPUTimeURL, requestPayload);
+            JarvisResponse response = JarvisRequester.PostRequest(processorCPUTimeURL, requestPayload);
             startTime = response.StartTimeUtc; // The jarvis site does some alignment w/ data (like gettin rid of milliseconds, etc.)
             endTime = response.EndTimeUtc;
             foreach (EvaluatedResult eval in response.Results.Values)

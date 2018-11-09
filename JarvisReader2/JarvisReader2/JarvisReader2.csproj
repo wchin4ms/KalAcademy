@@ -137,18 +137,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AzureDashboardRequest.cs" />
+    <Compile Include="AzureRequester.cs" />
+    <Compile Include="AzureRequestPayload.cs" />
+    <Compile Include="AzureResponse.cs" />
+    <Compile Include="AzureResponseTable.cs" />
+    <Compile Include="CardReader.cs" />
     <Compile Include="DBQueryInfo.cs" />
     <Compile Include="Dimension.cs" />
     <Compile Include="DimensionList.cs" />
     <Compile Include="EvaluatedResult.cs" />
     <Compile Include="FarmOverview.cs" />
     <Compile Include="IOverview.cs" />
-    <Compile Include="IOverviewRequest.cs" />
+    <Compile Include="OverviewRequest.cs" />
     <Compile Include="ProbeOverview.cs" />
     <Compile Include="ProbeOverviewRequest.cs" />
-    <Compile Include="JsonResponse.cs" />
+    <Compile Include="JarvisResponse.cs" />
     <Compile Include="Properties.cs" />
-    <Compile Include="RequestPayload.cs" />
+    <Compile Include="JarvisRequestPayload.cs" />
     <Compile Include="JsonResults.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
