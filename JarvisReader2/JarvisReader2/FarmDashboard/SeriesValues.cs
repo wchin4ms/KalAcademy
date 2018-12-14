@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using JarvisReader.DateUtils;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace JarvisReader
+namespace JarvisReader.FarmDashboard
 {
     class SeriesValues
     {
@@ -16,12 +13,9 @@ namespace JarvisReader
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("(");
-            DateTime epoch = new DateTime(1970, 1, 1);
-            TimeSpan tempTime = TimeSpan.FromMilliseconds(StartTimeMillisUtc);
-            stringBuilder.Append(epoch + tempTime);
+            stringBuilder.Append(DateTimeUtils.EPOCH_1970.AddMilliseconds(StartTimeMillisUtc));
             stringBuilder.Append(" - ");
-            tempTime = TimeSpan.FromMilliseconds(EndTimeMillisUtc);
-            stringBuilder.Append(epoch + tempTime);
+            stringBuilder.Append(DateTimeUtils.EPOCH_1970.AddMilliseconds(EndTimeMillisUtc));
             stringBuilder.Append("):");
             stringBuilder.Append("\n    ");
             stringBuilder.Append(string.Join(", ", Values));

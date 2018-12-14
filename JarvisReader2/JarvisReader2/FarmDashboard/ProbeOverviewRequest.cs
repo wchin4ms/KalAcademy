@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace JarvisReader
+namespace JarvisReader.FarmDashboard
 {
-    class ProbeOverviewRequest : OverviewRequest<ProbeOverview>
+    class ProbeOverviewRequest
     {
-        public static ProbeOverview Get(string farmLabel, long startTime, long endTime)
+        public static ProbeOverview Get(string farmLabel, long startMillisFromEpoch, long endMillisFromEpoch)
         {
             ProbeOverview overview = new ProbeOverview();
 
             // Availability Payload
-            JarvisRequestPayload requestPayload = new JarvisRequestPayload
+            FarmPayload requestPayload = new FarmPayload
             {
                 InstanceNum = new PayloadItem { Item1 = false, Item2 = new string[0] },
                 RunnerName = new PayloadItem { Item1 = false, Item2 = new string[] { "homepage", "uploaddoc", "teamsitehomepage" } },
@@ -21,12 +19,12 @@ namespace JarvisReader
                 FarmType = new PayloadItem { Item1 = false, Item2 = new string[1] { "Primary" } }
             };
             // Availability URL
-            string availabilityURL = BuildURL("Availability", "Success%20Rate", startTime, endTime);
+            string availabilityURL = BuildURL("Availability", "Success%20Rate", startMillisFromEpoch, endMillisFromEpoch);
 
             // Availability
             JarvisResponse response = JarvisRequester.PostRequest(availabilityURL, requestPayload);
-            startTime = response.StartTimeUtc;
-            endTime = response.EndTimeUtc;
+            startMillisFromEpoch = response.StartTimeUtc;
+            endMillisFromEpoch = response.EndTimeUtc;
 
             foreach (EvaluatedResult eval in response.Results.Values)
             {
@@ -35,8 +33,8 @@ namespace JarvisReader
                 int instanceNum = Convert.ToInt32(dimensions.Where(dim => dim.Key.Equals(Dimension.INSTANCE_NUM)).Single().Value);
                 SeriesValues seriesValues = new SeriesValues()
                 {
-                    StartTimeMillisUtc = startTime,
-                    EndTimeMillisUtc = endTime,
+                    StartTimeMillisUtc = startMillisFromEpoch,
+                    EndTimeMillisUtc = endMillisFromEpoch,
                     TimeResolutionInMillis = response.TimeResolutionInMilliseconds,
                     Values = eval.Scores.ToArray()
                 };
@@ -64,8 +62,8 @@ namespace JarvisReader
                 string machine = dimensions.Where(dim => dim.Key.Equals(Dimension.MACHINE)).Single().Value;
                 SeriesValues seriesValues = new SeriesValues()
                 {
-                    StartTimeMillisUtc = startTime,
-                    EndTimeMillisUtc = endTime,
+                    StartTimeMillisUtc = startMillisFromEpoch,
+                    EndTimeMillisUtc = endMillisFromEpoch,
                     TimeResolutionInMillis = response.TimeResolutionInMilliseconds,
                     Values = eval.Scores.ToArray()
                 };
@@ -76,7 +74,7 @@ namespace JarvisReader
             requestPayload.Environment = null;
             requestPayload.Machine = null;
             // Latency URL
-            string latencyURL = BuildURL("Latency", "Average", startTime, endTime);
+            string latencyURL = BuildURL("Latency", "Average", startMillisFromEpoch, endMillisFromEpoch);
 
             // Latency
             response = JarvisRequester.PostRequest(availabilityURL, requestPayload);
@@ -88,8 +86,8 @@ namespace JarvisReader
 
                 SeriesValues seriesValues = new SeriesValues()
                 {
-                    StartTimeMillisUtc = startTime,
-                    EndTimeMillisUtc = endTime,
+                    StartTimeMillisUtc = startMillisFromEpoch,
+                    EndTimeMillisUtc = endMillisFromEpoch,
                     TimeResolutionInMillis = response.TimeResolutionInMilliseconds,
                     Values = eval.Scores.ToArray()
                 };

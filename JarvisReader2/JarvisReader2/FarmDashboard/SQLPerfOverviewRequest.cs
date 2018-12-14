@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace JarvisReader
+namespace JarvisReader.FarmDashboard
 {
-    class SQLPerfOverviewRequest : OverviewRequest<SQLPerfOverview>
+    class SQLPerfOverviewRequest
     {
-        public static SQLPerfOverview Get(string farmLabel, long startTime, long endTime)
+        public static SQLPerfOverview Get(string farmLabel, long startMillisFromEpoch, long endMillisFromEpoch)
         {
             SQLPerfOverview overview = new SQLPerfOverview();
 
             // SQL Processor Utilization Payload
-            JarvisRequestPayload requestPayload = new JarvisRequestPayload()
+            FarmPayload requestPayload = new FarmPayload()
             {
                 Instance = new PayloadItem() { Item1 = false, Item2 = new string[0] },
                 DataCenter = new PayloadItem() { Item1 = false, Item2 = new string[0] },
@@ -26,20 +23,20 @@ namespace JarvisReader
                 Role = new PayloadItem() { Item1 = false, Item2 = new string[1] { "SQL" } },
             };
             // SQL Processor Utilization URL
-            string sqlProcUtilURL = BuildURL("PerfCounters", "%255CProcessor(*)%255C%2525%2520Processor%2520Time", "Max", startTime, endTime, 40, "Automatic", false);
+            string sqlProcUtilURL = BuildURL("PerfCounters", "%255CProcessor(*)%255C%2525%2520Processor%2520Time", "Max", startMillisFromEpoch, endMillisFromEpoch, 40, "Automatic", false);
 
             // Make Post
             JarvisResponse response = JarvisRequester.PostRequest(sqlProcUtilURL, requestPayload);
-            startTime = response.StartTimeUtc;
-            endTime = response.EndTimeUtc;
+            startMillisFromEpoch = response.StartTimeUtc;
+            endMillisFromEpoch = response.EndTimeUtc;
             foreach (EvaluatedResult eval in response.Results.Values)
             {
                 List<Dimension> dimensions = eval.DimensionList.Values;
                 string machine = dimensions.Where(dim => dim.Key.Equals(Dimension.MACHINE)).Single().Value;
                 SeriesValues seriesValues = new SeriesValues()
                 {
-                    StartTimeMillisUtc = startTime,
-                    EndTimeMillisUtc = endTime,
+                    StartTimeMillisUtc = startMillisFromEpoch,
+                    EndTimeMillisUtc = endMillisFromEpoch,
                     TimeResolutionInMillis = response.TimeResolutionInMilliseconds,
                     Values = eval.Scores.ToArray()
                 };
@@ -50,7 +47,7 @@ namespace JarvisReader
             requestPayload.Instance.Item2 = new string[1] { "sqlservr" };
 
             // SQL Thread Utilization URL
-            string sqlThreadUtilURL = BuildURL("PerfCounters", "%255CProcess(*)%255CThread%2520Count", "NullableAverage", startTime, endTime, 40, "Automatic", false);
+            string sqlThreadUtilURL = BuildURL("PerfCounters", "%255CProcess(*)%255CThread%2520Count", "NullableAverage", startMillisFromEpoch, endMillisFromEpoch, 40, "Automatic", false);
 
             // Make Post
             response = JarvisRequester.PostRequest(sqlThreadUtilURL, requestPayload);
@@ -60,8 +57,8 @@ namespace JarvisReader
                 string machine = dimensions.Where(dim => dim.Key.Equals(Dimension.MACHINE)).Single().Value;
                 SeriesValues seriesValues = new SeriesValues()
                 {
-                    StartTimeMillisUtc = startTime,
-                    EndTimeMillisUtc = endTime,
+                    StartTimeMillisUtc = startMillisFromEpoch,
+                    EndTimeMillisUtc = endMillisFromEpoch,
                     TimeResolutionInMillis = response.TimeResolutionInMilliseconds,
                     Values = eval.Scores.ToArray()
                 };
@@ -76,7 +73,7 @@ namespace JarvisReader
             requestPayload.IsContentAppPool = new PayloadItem() { Item1 = false, Item2 = new string[1] { "true" } };
 
             // Slowest SQL Connection Time URL
-            string slowestSQLConnectionTimeURL = BuildURL("RequestUsage", "TotalSqlConnectionDuration", "Sum", startTime, endTime, 40, "None", true);
+            string slowestSQLConnectionTimeURL = BuildURL("RequestUsage", "TotalSqlConnectionDuration", "Sum", startMillisFromEpoch, endMillisFromEpoch, 40, "None", true);
 
             // Make Post
             response = JarvisRequester.PostRequest(slowestSQLConnectionTimeURL, requestPayload);
@@ -86,8 +83,8 @@ namespace JarvisReader
                 string database = dimensions.Where(dim => dim.Key.Equals(Dimension.CONTENT_DATABASE)).Single().Value;
                 SeriesValues seriesValues = new SeriesValues()
                 {
-                    StartTimeMillisUtc = startTime,
-                    EndTimeMillisUtc = endTime,
+                    StartTimeMillisUtc = startMillisFromEpoch,
+                    EndTimeMillisUtc = endMillisFromEpoch,
                     TimeResolutionInMillis = response.TimeResolutionInMilliseconds,
                     Values = eval.Scores.ToArray()
                 };
@@ -101,7 +98,7 @@ namespace JarvisReader
             requestPayload.SlowestQueryServer = new PayloadItem() { Item1 = false, Item2 = new string[0] };
 
             // Slowest SQL Server Query Durations URL
-            string slowestSQLQueryURL = BuildURL("RequestUsage", "TotalSlowQueryDuration", "Sum", startTime, endTime, 40, "None", true);
+            string slowestSQLQueryURL = BuildURL("RequestUsage", "TotalSlowQueryDuration", "Sum", startMillisFromEpoch, endMillisFromEpoch, 40, "None", true);
 
             // Make Post
             response = JarvisRequester.PostRequest(slowestSQLQueryURL, requestPayload);
@@ -111,8 +108,8 @@ namespace JarvisReader
                 string server = dimensions.Where(dim => dim.Key.Equals(Dimension.SLOWEST_QUERY_SERVER)).Single().Value;
                 SeriesValues seriesValues = new SeriesValues()
                 {
-                    StartTimeMillisUtc = startTime,
-                    EndTimeMillisUtc = endTime,
+                    StartTimeMillisUtc = startMillisFromEpoch,
+                    EndTimeMillisUtc = endMillisFromEpoch,
                     TimeResolutionInMillis = response.TimeResolutionInMilliseconds,
                     Values = eval.Scores.ToArray()
                 };
@@ -123,7 +120,7 @@ namespace JarvisReader
             requestPayload.SlowestQueryDB = new PayloadItem() { Item1 = false, Item2 = new string[0] };
 
             // Slowest SQL Server Query Durations URL
-            string slowestDBQueryURL = BuildURL("RequestUsage", "TotalSlowQueryDuration", "Sum", startTime, endTime, 200, "None", true);
+            string slowestDBQueryURL = BuildURL("RequestUsage", "TotalSlowQueryDuration", "Sum", startMillisFromEpoch, endMillisFromEpoch, 200, "None", true);
 
             // Make Post
             response = JarvisRequester.PostRequest(slowestDBQueryURL, requestPayload);
@@ -134,8 +131,8 @@ namespace JarvisReader
                 string database = dimensions.Where(dim => dim.Key.Equals(Dimension.SLOWEST_QUERY_SERVER)).Single().Value;
                 SeriesValues seriesValues = new SeriesValues()
                 {
-                    StartTimeMillisUtc = startTime,
-                    EndTimeMillisUtc = endTime,
+                    StartTimeMillisUtc = startMillisFromEpoch,
+                    EndTimeMillisUtc = endMillisFromEpoch,
                     TimeResolutionInMillis = response.TimeResolutionInMilliseconds,
                     Values = eval.Scores.ToArray()
                 };

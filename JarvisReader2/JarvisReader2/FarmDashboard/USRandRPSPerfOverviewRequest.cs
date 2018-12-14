@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace JarvisReader
+namespace JarvisReader.FarmDashboard
 {
-    class USRandRPSPerfOverviewRequest : OverviewRequest<USRandRPSPerfOverview>
+    class USRandRPSPerfOverviewRequest
     {
-        public static USRandRPSPerfOverview Get(string farmLabel, long startTime, long endTime)
+        public static USRandRPSPerfOverview Get(string farmLabel, long startMillisFromEpoch, long endMillisFromEpoch)
         {
             USRandRPSPerfOverview overview = new USRandRPSPerfOverview();
 
             // USR Processor - % Processor Time for CPU
-            JarvisRequestPayload requestPayload = new JarvisRequestPayload()
+            FarmPayload requestPayload = new FarmPayload()
             {
                 Instance = new PayloadItem() { Item1 = false, Item2 = new string[1] { "_Total" } },
                 DataCenter = new PayloadItem() { Item1 = false, Item2 = new string[0] },
@@ -26,20 +23,20 @@ namespace JarvisReader
                 Role = new PayloadItem() { Item1 = false, Item2 = new string[1] { "USR" } },
             };
             // USR Processor - % Processor Time for CPU URL
-            string processorCPUTimeURL = BuildURL("%255CProcessor(*)%255C%2525%2520Processor%2520Time", "NullableAverage", startTime, endTime);
+            string processorCPUTimeURL = BuildURL("%255CProcessor(*)%255C%2525%2520Processor%2520Time", "NullableAverage", startMillisFromEpoch, endMillisFromEpoch);
 
             // Make Post
             JarvisResponse response = JarvisRequester.PostRequest(processorCPUTimeURL, requestPayload);
-            startTime = response.StartTimeUtc; // The jarvis site does some alignment w/ data (like gettin rid of milliseconds, etc.)
-            endTime = response.EndTimeUtc;
+            startMillisFromEpoch = response.StartTimeUtc; // The jarvis site does some alignment w/ data (like gettin rid of milliseconds, etc.)
+            endMillisFromEpoch = response.EndTimeUtc;
             foreach (EvaluatedResult eval in response.Results.Values)
             {
                 List<Dimension> dimensions = eval.DimensionList.Values;
                 string machine = dimensions.Where(dim => dim.Key.Equals(Dimension.MACHINE)).Single().Value;
                 SeriesValues seriesValues = new SeriesValues()
                 {
-                    StartTimeMillisUtc = startTime,
-                    EndTimeMillisUtc = endTime,
+                    StartTimeMillisUtc = startMillisFromEpoch,
+                    EndTimeMillisUtc = endMillisFromEpoch,
                     TimeResolutionInMillis = response.TimeResolutionInMilliseconds,
                     Values = eval.Scores.ToArray()
                 };
@@ -50,20 +47,20 @@ namespace JarvisReader
             requestPayload.Instance.Item2 = new string[0];
 
             // USR Processor - % Processor Time for Requests
-            string processorTimeRequestsURL = BuildURL("%255CASP%252ENET%255CRequests%2520Current", "Max", startTime, endTime);
+            string processorTimeRequestsURL = BuildURL("%255CASP%252ENET%255CRequests%2520Current", "Max", startMillisFromEpoch, endMillisFromEpoch);
 
             // Make Post
             response = JarvisRequester.PostRequest(processorTimeRequestsURL, requestPayload);
-            startTime = response.StartTimeUtc; // The jarvis site does some alignment w/ data (like gettin rid of milliseconds, etc.)
-            endTime = response.EndTimeUtc;
+            startMillisFromEpoch = response.StartTimeUtc; // The jarvis site does some alignment w/ data (like gettin rid of milliseconds, etc.)
+            endMillisFromEpoch = response.EndTimeUtc;
             foreach (EvaluatedResult eval in response.Results.Values)
             {
                 List<Dimension> dimensions = eval.DimensionList.Values;
                 string machine = dimensions.Where(dim => dim.Key.Equals(Dimension.MACHINE)).Single().Value;
                 SeriesValues seriesValues = new SeriesValues()
                 {
-                    StartTimeMillisUtc = startTime,
-                    EndTimeMillisUtc = endTime,
+                    StartTimeMillisUtc = startMillisFromEpoch,
+                    EndTimeMillisUtc = endMillisFromEpoch,
                     TimeResolutionInMillis = response.TimeResolutionInMilliseconds,
                     Values = eval.Scores.ToArray()
                 };

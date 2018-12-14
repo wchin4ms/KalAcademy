@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using System.Text;
 
-namespace JarvisReader
+namespace JarvisReader.FarmDashboard
 {
     enum QueryParam
     {

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JarvisReader
+namespace JarvisReader.Authentication
 {
     public static class Properties
     {
         private static Dictionary<String, String> list = null;
-        private const string FileName = "auth.properties";
+        private const string FileName = "./Authentication/auth.properties";
 
         public static string Get(String field)
         {

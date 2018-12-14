@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace JarvisReader
+namespace JarvisReader.FarmDashboard
 {
-
-    class JarvisRequestPayload
+    public class FarmPayload
     {
         [JsonProperty("Instance")]
         public PayloadItem Instance { get; set; }
@@ -35,5 +34,12 @@ namespace JarvisReader
         public PayloadItem SlowestQueryDB { get; set; }
         [JsonProperty("SlowestQueryServer")]
         public PayloadItem SlowestQueryServer { get; set; }
+    }
+    public class PayloadItem
+    {
+        [JsonProperty("Item1")]
+        public bool Item1 { get; set; }
+        [JsonProperty("Item2")]
+        public string[] Item2 { get; set; }
     }
 }
